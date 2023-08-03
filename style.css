@@ -1,0 +1,152 @@
+.page_title {
+    padding: 30px 0px;
+}
+.page_title h1 {
+    color: #c0392b;
+    font-weight: 700;
+    line-height: 2;
+    margin-bottom: 0;
+    position: relative;
+    text-transform: capitalize;
+}
+.page_title h1::before {
+    background: #c0392b;
+    width: 70px;
+    height: 2px;
+    position: absolute;
+    content: '';
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.page_title h1::after {
+    position: absolute;
+    content: '';
+    background: #fbc531;
+    width: 30px;
+    height: 2px;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+/*Menu starts*/
+.menu_tab {
+    margin: 0 auto;
+    justify-content: center;
+}
+.nav-item {
+    display: inline-block;
+    text-align: center;
+}
+.nav-tabs .nav-link{
+    transition: .3s;
+}
+.nav-tabs .nav-link.active {
+    background: #c0392b;
+    color: #fff;
+    font-weight: 700;
+    border: 1px solid #c0392b;
+    text-transform: capitalize;
+}
+.nav-link {
+    color: #000;
+}
+.nav-tabs .nav-link:hover {
+    background: #c0392b;
+    color: #fff;
+    border: 1px solid #c0392b;
+}
+.single_menu {
+    position: relative;
+    margin-bottom: 75px;
+    transition: .3s;
+    display: flex; /* İçeriği yatay olarak hizalamak için "flex" özelliği ekleyin */
+    align-items: center; /* İçeriği dikey olarak ortalamak için "align-items" özelliği ekleyin */
+  }
+  
+  .single_menu:hover img {
+    clip-path: none; /* Farenin üzerine gelindiğinde resimlerin tamamını göstermek için clip-path'i kaldırın */
+  }
+  
+  .single_menu img {
+    min-width: 200px;
+    position: relative; /* Konumu "relative" olarak değiştirin */
+    height: 140px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    object-fit: cover;
+  }
+  
+  .menu_content {
+    flex-grow: 1; /* Menü içeriğinin mevcut alanı kaplamasına izin vermek için "flex-grow" özelliği ekleyin */
+    padding-left: 15px; /* Gerekirse dolgu miktarını ayarlayın */
+  }
+  
+  .menu_btn.btn.btn-danger {
+    background: #c0392b;
+    border: 1px solid #c0392b;
+    transition: .3s;
+    text-transform: capitalize;
+    font-weight: 700;
+    overflow: hidden;
+    padding: 10px 20px; /* Gerekirse dolgu miktarını ayarlayın */
+    margin-left: auto; /* Düğmeyi içeriğin sağ tarafına itmek için "margin-left" özelliği ekleyin */
+    display: block;
+  }
+  
+  /* İsteğe bağlı: Düğme animasyonunu ayarlayın */
+  .btn.btn-danger::before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    left: -100%;
+    top: 100%;
+    transition: .3s;
+    z-index: -1;
+  }
+  
+.cart-container {
+  background-color: #f9f9f9;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 999;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-items {
+  text-align: left;
+}
+
+.cart-item {
+  margin-bottom: 10px;
+}
+
+.cart-item::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+  margin-top: 10px;
+}
+
+.cart-total-price {
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.cart-container p,
+.cart-container span {
+  font-size: 12px;
+}
+
+.cart-container button {
+  font-size: 10px;
+  padding: 5px 10px;
+}
