@@ -7,21 +7,10 @@ const app = express();
 app.use(cors());
 const port = 4000;
 
-
-
-
-
 // Sunucu Test
 app.get('/', (req,res) =>{
     res.send("Sunucu Çalışıyor")
 })
-
-
-
-
-
-
-
 
 app.use(express.json()); 
 app.post('/pay', (req, res) => {
@@ -107,9 +96,6 @@ app.post('/pay', (req, res) => {
         }
     });
 });
-
-
-
 
 
 app.listen(port, () => {

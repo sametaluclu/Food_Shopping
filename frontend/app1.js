@@ -42,10 +42,10 @@ let cartItems = {};
     return Math.random().toString(36).substr(2, 9);
   }
   function payTotalPrice() {
-    // Open the payment modal
+    
     $("#paymentModal").modal("show");
     
-    // Clear input fields when modal is closed
+    
     $("#paymentModal").on("hidden.bs.modal", function () {
       $("#cardNumber").val("");
       $("#expiryDate").val("");
@@ -53,7 +53,7 @@ let cartItems = {};
     });
   }
   
-  // Attach the click event handler to the payment button
+  
   $(".btn-pay").on("click", function () {
     payTotalPrice();
   });
@@ -64,7 +64,7 @@ let cartItems = {};
     for (const itemInfo of Object.values(cartItems)) {
       totalPrice += itemInfo.price * itemInfo.quantity;
     }
-    //console.log(totalPrice)
+    
     return totalPrice.toString();
   }
 
@@ -111,8 +111,6 @@ let cartItems = {};
         }
       }
       );
-    
-    
   }
   
 
