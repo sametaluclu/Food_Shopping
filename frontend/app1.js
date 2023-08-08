@@ -1,7 +1,5 @@
-//const { request } = require('http');
-//var request = require('http');
-
-let cartItems = {};
+  let cartItems = {};
+  var itemQuantity = 0
   let cartIsOpen = false;
 
   // Sepet görünümünü güncellemek için fonksiyon
@@ -65,19 +63,22 @@ let cartItems = {};
       totalPrice += itemInfo.price * itemInfo.quantity;
     }
     
-    return totalPrice.toString();
+    return totalPrice;
   }
 
-  function pay(){
+  function pay() {
+    console.log('ım here')
     var CardDetails = {
       cardNumber: $("#cardNumber").val(),
       expireMonth: $("#expiryDate").val().split("/")[0],
       expireYear: $("#expiryDate").val().split("/")[1],
       cvc: $("#cvv").val(),
       cardHolderName: $("#cardHolderName").val(),
-    }
-
+    };
+  
     var BasketItems = [];
+    
+  
     for (const [itemId, itemInfo] of Object.entries(cartItems)) {
       BasketItems.push({
         id: itemInfo.id,
@@ -85,12 +86,12 @@ let cartItems = {};
         category1: 'Yemek',
         category2: 'Yemek1',
         itemType: 'PHYSICAL',
-        price: itemInfo.price.toString(),
+        onlyPrice: itemInfo.price,
+        price: (itemInfo.price * itemInfo.quantity), // Burada fiyatı çarpıp stringe çeviriyoruz
+        // Diğer alanları da eklemeyi unutmayın
       });
-      console.log(CardDetails)
-      console.log(BasketItems)
-      console.log(calculateTotalPrice())
     }
+    console.log(BasketItems.length)
     fetch("http://localhost:4000/pay", {
       method: "POST",
       headers: {
@@ -100,6 +101,9 @@ let cartItems = {};
         paidPrice: calculateTotalPrice(),
         cardDetails: CardDetails,
         basketItems: BasketItems,
+      
+        arrlength: itemQuantity,
+        
       }),
     })
       .then((res) => res.json())
@@ -109,10 +113,8 @@ let cartItems = {};
         } else {
           alert("Ödeme başarısız!");
         }
-      }
-      );
+      });
   }
-  
 
   // Satın alma düğmesi tıklamasını işleyen fonksiyon
   $(".btn-purchase").on("click", function () {
@@ -121,7 +123,7 @@ let cartItems = {};
 
     // Eğer ürün daha önce eklenmişse, adet bilgisini artırıyoruz; aksi halde yeni bir ürün olarak ekliyoruz
     if (cartItems[itemName]) {
-      cartItems[itemName].quantity += 1;
+      cartItems[itemName].quantity+=0+1;
     } else {
       const itemId = generateID(); // Öğe için benzersiz bir kimlik oluşturuyoruz
       cartItems[itemName] = {
