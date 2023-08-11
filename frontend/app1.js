@@ -75,7 +75,7 @@
       cvc: $("#cvv").val(),
       cardHolderName: $("#cardHolderName").val(),
     };
-  
+    console.log(cardHolderName)
     var BasketItems = [];
     
   
@@ -87,7 +87,7 @@
         category2: 'Yemek1',
         itemType: 'PHYSICAL',
         onlyPrice: itemInfo.price,
-        price: (itemInfo.price * itemInfo.quantity), // Burada fiyatı çarpıp stringe çeviriyoruz
+        price: (itemInfo.price * itemInfo.quantity), // Burada fiyatı çarpıyoruz
         // Diğer alanları da eklemeyi unutmayın
       });
     }
@@ -101,7 +101,6 @@
         paidPrice: calculateTotalPrice(),
         cardDetails: CardDetails,
         basketItems: BasketItems,
-      
         arrlength: itemQuantity,
         
       }),

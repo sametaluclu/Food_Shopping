@@ -3,6 +3,25 @@ const cors = require('cors');
 const Iyzipay = require('iyzipay');
 const mysql = require('mysql2');
 
+// Şu anki tarihi ve saati almak için fonksiyon
+function getCurrentDateTime() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Ay sıfırla başlarsa düzeltme
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  const currentDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return currentDateTime;
+}
+
+// Şu anki tarihi ve saati al
+const currentDateTime = getCurrentDateTime();
+console.log(currentDateTime); // Örnek çıktı: "2023-08-09 15:30:45"
+
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -20,7 +39,8 @@ const iyzipay = new Iyzipay({
 });
 
 // Sipariş verilerini veritabanına ekleyen fonksiyon
-function saveOrderToDatabase(totalPrice, basketItems, counter) {
+function saveOrderToDatabase(totalPrice, basketItems, cardDetails ) {
+
   // MySQL bağlantısı
   const connection = mysql.createConnection({
     host: 'localhost',
@@ -33,6 +53,9 @@ function saveOrderToDatabase(totalPrice, basketItems, counter) {
   const orderData = {
     toplam_fiyat: totalPrice,
     durum: 'başarılı', // Ödeme başarılı kabul edildi varsayalım
+    olusturulma_tarihi:currentDateTime,
+    musteri_isim:cardDetails["cardHolderName"],
+    teslim_durumu: 0
   };
 
   // Siparişi veritabanına ekle
@@ -44,14 +67,14 @@ function saveOrderToDatabase(totalPrice, basketItems, counter) {
     }
 
     const siparisId = orderResult.insertId;
-    //console.log(basketItems)
-    //const len = basketItems.length()
+    
     const orderItemsData = basketItems.map(item => [
       siparisId,
       item.name,
       item.price,
       item.price/item.onlyPrice
     ]);
+    
 
 
     // Sipariş ürünlerini veritabanına ekle
@@ -66,6 +89,67 @@ function saveOrderToDatabase(totalPrice, basketItems, counter) {
     });
   });
 }
+app.get('/orders', (req, res) => {
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Samet@44',
+    database: 'siparisler',
+  });
+
+  const query = `
+  select siparis_urunleri.adet, siparis_urunleri.urun_adi, siparis_urunleri.urun_fiyati, siparisler.* from siparis_urunleri,siparisler where siparisler.id=siparis_urunleri.siparis_id and siparisler.teslim_durumu=0 order by siparisler.id ASC
+  `;
+  const sql2 = 'select * from siparisler where teslim_durumu=0'
+
+  connection.query(sql2, (err, results) => {
+    if (err) {
+      console.error('Veri çekilirken bir hata oluştu:', err);
+      connection.end();
+      return res.status(500).json({ error: 'Veri çekilirken bir hata oluştu' });
+    }
+    console.log(results)
+    const orders = results.map(result => ({
+      id: result.id, // Takma adı siparis_id olarak kullanıyoruz
+      musteri_isim: result.musteri_isim,
+      olusturulma_tarihi: result.olusturulma_tarihi,
+      toplam_fiyat: result.toplam_fiyat,
+      urun_adi: result.urun_adi,
+      adet: result.adet
+    }));
+
+    res.send(results);
+
+    connection.end();
+  });
+});
+app.post('/orders/:orderId', async (req, res) => {
+  const orderId = req.params.orderId;
+
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Samet@44',
+    database: 'siparisler',
+  });
+
+  try {
+    await new Promise((resolve, reject) => {
+      connection.query('update siparisler set teslim_durumu=1 where id=?', [orderId], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    connection.end();
+    res.json({ status: 'success' });
+  } catch (error) {
+    console.error('Sipariş silinirken bir hata oluştu:', error);
+    connection.end();
+    res.status(500).json({ status: 'error' });
+  }
+});
+
 
 app.post('/pay', (req, res) => {
   console.log('ım here maın route')
@@ -133,7 +217,7 @@ app.post('/pay', (req, res) => {
 
     if (result.status === 'success') {
       // Ödeme başarılı, siparişi ve ürünleri veritabanına kaydet
-      saveOrderToDatabase(totalPrice, basketItems, counter);
+      saveOrderToDatabase(totalPrice, basketItems, cardDetails);
 
       return res.send({ status: 'success' });
     } else {
